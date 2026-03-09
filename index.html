@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bloodline Attribute Finder</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #1c1c1c;
+    color: #fff;
+    padding: 30px;
+}
+h1 {
+    margin-top: 0;
+}
+.container {
+    display: flex;
+    gap: 30px;
+}
+.filters {
+    min-width: 200px;
+}
+label {
+    display: block;
+    margin: 6px 0;
+    cursor: pointer;
+}
+.results {
+    flex-grow: 1;
+}
+.card {
+    background: #2b2b2b;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.attributes {
+    font-size: 0.9em;
+    color: #bbb;
+}
+</style>
+</head>
+<body>
+
+<h1>Bloodline Attribute Finder</h1>
+<p>Select attributes to filter bloodlines.</p>
+
+<div class="container">
+
+<div class="filters">
+<h3>Attributes</h3>
+<label><input type="checkbox" value="physique"> Physique</label>
+<label><input type="checkbox" value="intelligence"> Intelligence</label>
+<label><input type="checkbox" value="liveliness"> Liveliness</label>
+<label><input type="checkbox" value="obedience"> Obedience</label>
+<label><input type="checkbox" value="friendliness"> Friendliness</label>
+</div>
+
+<div class="results">
+<h3>Bloodlines</h3>
+<div id="results"></div>
+</div>
+
+</div>
+
+<script>
+const bloodlines = [
+  { name: "Pet Race", attributes: ["intelligence","physique"] },
+  { name: "Poker Tournament", attributes: ["intelligence","liveliness"] },
+  { name: "Realm Revival", attributes: ["physique","friendliness"] },
+  { name: "Royal Mine", attributes: ["liveliness","friendliness"] },
+  { name: "Scarlet Beauty", attributes: ["intelligence","physique"] },
+  { name: "School of Athens", attributes: ["intelligence","obedience"] },
+  { name: "Siege of Undead", attributes: ["obedience","friendliness"] },
+  { name: "Twilight Castle", attributes: ["liveliness","obedience"] },
+  { name: "Uncharted Waters", attributes: ["physique","liveliness"] },
+  { name: "War of the Lions: Supply Reserves", attributes: ["physique","obedience"] },
+  { name: "War of the Lions: Fortress War", attributes: ["intelligence","friendliness"] },
+  { name: "Dragon Island Treasure", attributes: ["intelligence","friendliness"] },
+  { name: "Masquerade Ball", attributes: ["intelligence","liveliness"] },
+  { name: "Mystery Murder", attributes: ["liveliness","obedience"] },
+  { name: "Nibelungen", attributes: ["obedience","friendliness"] },
+  { name: "Throne of the Wolves", attributes: ["physique","liveliness"] },
+  { name: "Shadow of the Warren", attributes: ["intelligence","obedience"] }
+];
+
+const checkboxes = document.querySelectorAll("input[type=checkbox]");
+const results = document.getElementById("results");
+
+checkboxes.forEach(cb => cb.addEventListener("change", filter));
+
+function filter() {
+  const selected = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+
+  let filtered;
+  if(selected.length === 0) {
+    filtered = bloodlines;
+  } else {
+    filtered = bloodlines.filter(b => selected.every(attr => b.attributes.includes(attr)));
+  }
+  display(filtered);
+}
+
+function display(list) {
+  results.innerHTML = "";
+  if(list.length === 0) {
+    results.innerHTML = "<p>No bloodlines match.</p>";
+    return;
+  }
+  list.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<strong>${b.name}</strong><div class="attributes">${b.attributes.join(", ")}</div>`;
+    results.appendChild(div);
+  });
+}
+
+// mostrar todas al inicio
+display(bloodlines);
+
+</script>
+</body>
+</html>
