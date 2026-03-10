@@ -4,44 +4,117 @@
 <meta charset="UTF-8">
 <title>Bloodline Attribute Finder</title>
 <style>
+/* ----------------- Base ----------------- */
 body {
-    font-family: Arial, sans-serif;
-    background: #1c1c1c;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
     color: #fff;
     padding: 30px;
+    overflow-x: hidden;
 }
+
 h1 {
     margin-top: 0;
+    font-weight: 700;
+    font-size: 2em;
+    color: #e63946; /* rojo oscuro elegante */
+    text-shadow: 0 0 8px #e6394666;
 }
+
+p {
+    color: #aaa;
+}
+
+/* ----------------- Layout ----------------- */
 .container {
     display: flex;
     gap: 30px;
+    flex-wrap: wrap;
 }
+
 .filters {
-    min-width: 200px;
+    min-width: 220px;
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
 }
+
 label {
     display: block;
-    margin: 6px 0;
+    margin: 10px 0;
     cursor: pointer;
+    font-weight: 500;
+    transition: color 0.3s;
 }
+label:hover {
+    color: #e63946;
+}
+
 .results {
     flex-grow: 1;
+    min-width: 300px;
 }
+
+/* ----------------- Cards ----------------- */
 .card {
-    background: #2b2b2b;
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
+    background: linear-gradient(145deg, #1a1a1a, #2b2b2b);
+    padding: 16px 20px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    transition: transform 0.4s, box-shadow 0.4s, opacity 0.4s;
+    opacity: 0;
+    transform: translateY(20px);
 }
+.card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.7);
+    background: linear-gradient(145deg, #2b2b2b, #3c3c3c);
+}
+
+.card strong {
+    font-size: 1.2em;
+    color: #e63946;
+    text-shadow: 0 0 6px #e6394666;
+}
+
+/* ----------------- Attributes ----------------- */
 .attributes {
     font-size: 0.9em;
     color: #bbb;
+    margin-top: 8px;
 }
+
 .attributes .attr {
     cursor: pointer;
     text-decoration: underline;
-    margin-right: 4px;
+    margin-right: 8px;
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+.attributes .attr:hover {
+    background: #e6394622;
+    color: #e63946;
+    transform: scale(1.2);
+}
+.attributes .attr.active {
+    background: #e6394644;
+    color: #e63946;
+}
+
+/* ----------------- Animation ----------------- */
+@keyframes fadeSlideUp {
+    0% {opacity:0; transform: translateY(20px);}
+    100% {opacity:1; transform: translateY(0);}
 }
 </style>
 </head>
@@ -120,24 +193,29 @@ function display(list) {
     return;
   }
 
-  list.forEach(b => {
+  list.forEach((b, i) => {
     const div = document.createElement("div");
     div.className = "card";
 
     const attrs = b.attributes.map(attr => `<span class="attr" data-attr="${attr}">${attr}</span>`).join(", ");
     div.innerHTML = `<strong>${b.name}</strong><div class="attributes">${attrs}</div>`;
     results.appendChild(div);
+
+    setTimeout(() => div.classList.add('show'), i * 50);
   });
 
-  // Agregar evento a cada atributo clicable
   const attrSpans = results.querySelectorAll(".attr");
   attrSpans.forEach(span => {
+    span.classList.remove("active");
+    const cb = document.querySelector(`input[type=checkbox][value="${span.dataset.attr}"]`);
+    if(cb.checked) span.classList.add("active");
+
     span.addEventListener("click", () => {
       const attr = span.dataset.attr;
       const cb = document.querySelector(`input[type=checkbox][value="${attr}"]`);
       if(cb) {
-        cb.checked = !cb.checked; // alternar checkbox
-        filter(); // actualizar lista
+        cb.checked = !cb.checked;
+        filter();
       }
     });
   });
@@ -145,7 +223,7 @@ function display(list) {
 
 // mostrar todas al inicio
 display(bloodlines);
-
 </script>
+
 </body>
 </html>
