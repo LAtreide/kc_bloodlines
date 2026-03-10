@@ -38,6 +38,11 @@ label {
     font-size: 0.9em;
     color: #bbb;
 }
+.attributes .attr {
+    cursor: pointer;
+    text-decoration: underline;
+    margin-right: 4px;
+}
 </style>
 </head>
 <body>
@@ -114,11 +119,27 @@ function display(list) {
     results.innerHTML = "<p>No bloodlines match.</p>";
     return;
   }
+
   list.forEach(b => {
     const div = document.createElement("div");
     div.className = "card";
-    div.innerHTML = `<strong>${b.name}</strong><div class="attributes">${b.attributes.join(", ")}</div>`;
+
+    const attrs = b.attributes.map(attr => `<span class="attr" data-attr="${attr}">${attr}</span>`).join(", ");
+    div.innerHTML = `<strong>${b.name}</strong><div class="attributes">${attrs}</div>`;
     results.appendChild(div);
+  });
+
+  // Agregar evento a cada atributo clicable
+  const attrSpans = results.querySelectorAll(".attr");
+  attrSpans.forEach(span => {
+    span.addEventListener("click", () => {
+      const attr = span.dataset.attr;
+      const cb = document.querySelector(`input[type=checkbox][value="${attr}"]`);
+      if(cb) {
+        cb.checked = !cb.checked; // alternar checkbox
+        filter(); // actualizar lista
+      }
+    });
   });
 }
 
